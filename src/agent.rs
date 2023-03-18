@@ -1,4 +1,5 @@
-use crate::BanditArm;
+use crate::arm::BanditArm;
+use crate::policy::{argmax, Policy};
 
 pub trait Agent {
     fn run<T: BanditArm>(&mut self, bandit: &[T], n_episodes: i32, horizon: i32) -> Vec<f64>;
@@ -7,15 +8,20 @@ pub trait Agent {
     fn reset(&mut self);
 }
 
-pub struct ProtoAgent {
+pub struct Player<P: Policy> {
+    policy: P,
     n_arms: usize,
     values: Vec<f64>,
     counts: Vec<f64>,
 }
 
-impl ProtoAgent {
-    pub fn new() -> Self {
+impl<P> Player<P>
+where
+    P: Policy,
+{
+    pub fn new(policy: P) -> Self {
         Self {
+            policy,
             n_arms: 0,
             values: Vec::new(),
             counts: Vec::new(),
@@ -23,7 +29,10 @@ impl ProtoAgent {
     }
 }
 
-impl Agent for ProtoAgent {
+impl<P> Agent for Player<P>
+where
+    P: Policy,
+{
     fn run<T: BanditArm>(&mut self, bandit: &[T], n_episodes: i32, horizon: i32) -> Vec<f64> {
         self.n_arms = bandit.len();
         self.values = vec![0.0; self.n_arms];
@@ -44,7 +53,9 @@ impl Agent for ProtoAgent {
         freqs
     }
 
-    fn select_arm(&mut self) -> usize { 0 }
+    fn select_arm(&mut self) -> usize {
+        self.policy.select_arm(&self.values)
+    }
 
     fn update(&mut self, arm: usize, reward: f64) {
         self.counts[arm] += 1.0;
@@ -56,29 +67,4 @@ impl Agent for ProtoAgent {
         self.values.clear();
         self.counts.clear();
     }
-}
-
-
-pub fn argmax(vals: &[f64]) -> usize {
-    let mut max = f64::MIN;
-    let mut idx: usize = 0;
-    for (i, &val) in vals.iter().enumerate() {
-        if val > max {
-            max = val;
-            idx = i;
-        }
-    }
-    idx
-}
-
-pub fn mse(vals: &[f64], idx: usize) -> f64 {
-    let error: f64 = vals
-        .iter()
-        .enumerate()
-        .map(|(i, val)| match i {
-            a if a == idx => (val - 1.0).powi(2),
-            _a => val.powi(2),
-        })
-        .sum();
-    (error / vals.len() as f64).sqrt()
 }
