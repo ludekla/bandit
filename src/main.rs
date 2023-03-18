@@ -2,9 +2,9 @@ mod agent;
 mod epsgreed;
 mod softmax;
 
-use crate::agent::{Agent, mse};
+use crate::agent::{mse, Agent};
 use crate::epsgreed::EpsilonGreedy;
-use crate::softmax::{Softmax, AnnealingSoftmax};
+use crate::softmax::{AnnealingSoftmax, Softmax};
 
 /// Trait description
 pub trait BanditArm {
@@ -48,15 +48,30 @@ fn main() {
     let mut eg = EpsilonGreedy::new(0.1);
     let fq = eg.run(&bandit, 10000, 5);
     println!("EpsilonGreedy");
-    println!("Bandit: {:?}\nFreqs: {:?}\nError: {:?}", bandit, fq, mse(&fq, 2));
+    println!(
+        "Bandit: {:?}\nFreqs: {:?}\nError: {:?}",
+        bandit,
+        fq,
+        mse(&fq, 2)
+    );
 
     let mut sm = Softmax::new(1.0);
-    let fq = sm.run(&bandit, 200, 5);
+    let fq = sm.run(&bandit, 10000, 5);
     println!("Softmax");
-    println!("Bandit: {:?}\nFreqs: {:?}\nError: {:?}", bandit, fq, mse(&fq, 2));
+    println!(
+        "Bandit: {:?}\nFreqs: {:?}\nError: {:?}",
+        bandit,
+        fq,
+        mse(&fq, 2)
+    );
 
     let mut sm = AnnealingSoftmax::new(1.0);
-    let fq = sm.run(&bandit, 200, 5);
+    let fq = sm.run(&bandit, 10000, 5);
     println!("AnnealingSoftmax");
-    println!("Bandit: {:?}\nFreqs: {:?}\nError: {:?}", bandit, fq, mse(&fq, 2));
+    println!(
+        "Bandit: {:?}\nFreqs: {:?}\nError: {:?}",
+        bandit,
+        fq,
+        mse(&fq, 2)
+    );
 }

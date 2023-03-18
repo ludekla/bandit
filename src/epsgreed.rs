@@ -1,7 +1,7 @@
 use rand::{self, rngs::ThreadRng, Rng};
 
+use crate::agent::{argmax, Agent, ProtoAgent};
 use crate::BanditArm;
-use crate::agent::{argmax, Agent};
 
 #[derive(Debug)]
 pub struct EpsilonGreedy {

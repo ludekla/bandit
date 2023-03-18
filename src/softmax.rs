@@ -1,5 +1,5 @@
-use crate::BanditArm;
 use crate::agent::{argmax, Agent};
+use crate::BanditArm;
 
 #[derive(Debug)]
 pub struct Softmax {
@@ -54,7 +54,8 @@ impl Agent for Softmax {
     }
 
     fn select_arm(&mut self) -> usize {
-        let mut distro: Vec<f64> = self.values
+        let mut distro: Vec<f64> = self
+            .values
             .iter()
             .map(|val| val.exp() / self.temperature)
             .collect();
@@ -97,7 +98,9 @@ impl Agent for AnnealingSoftmax {
     fn select_arm(&mut self) -> usize {
         let count: f64 = self.softmax.counts.iter().sum();
         let temp = self.softmax.temperature / (count + 1.00001).ln();
-        let mut distro: Vec<f64> = self.softmax.values
+        let mut distro: Vec<f64> = self
+            .softmax
+            .values
             .iter()
             .map(|val| val.exp() / temp)
             .collect();
