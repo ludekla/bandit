@@ -1,3 +1,4 @@
+use crate::agent::Agent;
 use crate::policy::Policy;
 
 #[derive(Debug)]
@@ -24,7 +25,8 @@ impl Softmax {
 }
 
 impl Policy for Softmax {
-    fn select_arm(&mut self, values: &[f64]) -> usize {
+    fn select_arm<A: Agent>(&self, agent: &A) -> usize {
+        let values = agent.get_values();
         let mut distro: Vec<f64> = values
             .iter()
             .map(|val| val.exp() / self.temperature)
@@ -40,27 +42,24 @@ impl Policy for Softmax {
 #[derive(Debug)]
 pub struct AnnealingSoftmax {
     temperature: f64,
-    count: f64,
 }
 
 impl AnnealingSoftmax {
     pub fn new(temperature: f64) -> Self {
-        Self {
-            temperature,
-            count: 0.0,
-        }
+        Self { temperature }
     }
 }
 
 impl Policy for AnnealingSoftmax {
-    fn select_arm(&mut self, values: &[f64]) -> usize {
-        let temp = self.temperature / (self.count + 1.00001).ln();
+    fn select_arm<A: Agent>(&self, agent: &A) -> usize {
+        let values = agent.get_values();
+        let count: f64 = agent.get_counts().iter().sum();
+        let temp = self.temperature / (count + 1.00001).ln();
         let mut distro: Vec<f64> = values.iter().map(|val| val.exp() / temp).collect();
         let norm: f64 = distro.iter().sum();
         for val in distro.iter_mut() {
             *val /= norm;
         }
-        self.count += 1.0;
         Softmax::choose(&distro)
     }
 }

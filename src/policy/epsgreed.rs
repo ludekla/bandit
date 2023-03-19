@@ -1,26 +1,24 @@
-use rand::{self, rngs::ThreadRng, Rng};
+use rand::{self, Rng};
 
+use crate::agent::Agent;
 use crate::policy::{argmax, Policy};
 
 #[derive(Debug)]
 pub struct EpsilonGreedy {
     epsilon: f64,
-    rng: ThreadRng,
 }
 
 impl EpsilonGreedy {
     pub fn new(epsilon: f64) -> EpsilonGreedy {
-        EpsilonGreedy {
-            epsilon,
-            rng: rand::thread_rng(),
-        }
+        EpsilonGreedy { epsilon }
     }
 }
 
 impl Policy for EpsilonGreedy {
-    fn select_arm(&mut self, values: &[f64]) -> usize {
+    fn select_arm<A: Agent>(&self, agent: &A) -> usize {
+        let values = agent.get_values();
         if rand::random::<f64>() < self.epsilon {
-            self.rng.gen_range(0..values.len())
+            rand::thread_rng().gen_range(0..values.len())
         } else {
             argmax(values)
         }
