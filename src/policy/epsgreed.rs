@@ -16,7 +16,7 @@ impl EpsilonGreedy {
 
 impl Policy for EpsilonGreedy {
     fn select_arm<A: Agent>(&self, agent: &A) -> usize {
-        let values = agent.get_values();
+        let values = agent.borrow_values();
         if rand::random::<f64>() < self.epsilon {
             rand::thread_rng().gen_range(0..values.len())
         } else {

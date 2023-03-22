@@ -26,7 +26,7 @@ impl Softmax {
 
 impl Policy for Softmax {
     fn select_arm<A: Agent>(&self, agent: &A) -> usize {
-        let values = agent.get_values();
+        let values = agent.borrow_values();
         let mut distro: Vec<f64> = values
             .iter()
             .map(|val| val.exp() / self.temperature)
@@ -52,8 +52,8 @@ impl AnnealingSoftmax {
 
 impl Policy for AnnealingSoftmax {
     fn select_arm<A: Agent>(&self, agent: &A) -> usize {
-        let values = agent.get_values();
-        let count: f64 = agent.get_counts().iter().sum();
+        let values = agent.borrow_values();
+        let count: f64 = agent.borrow_counts().iter().sum();
         let temp = self.temperature / (count + 1.00001).ln();
         let mut distro: Vec<f64> = values.iter().map(|val| val.exp() / temp).collect();
         let norm: f64 = distro.iter().sum();

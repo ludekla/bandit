@@ -16,8 +16,8 @@ pub trait Agent {
     fn init(&mut self, n_arms: usize);
     fn select_arm(&self) -> usize;
     fn update(&mut self, arm: usize, reward: f64);
-    fn get_values(&self) -> &[f64];
-    fn get_counts(&self) -> &[f64];
+    fn borrow_values(&self) -> &[f64];
+    fn borrow_counts(&self) -> &[f64];
     fn best_arm(&self) -> usize;
     fn reset(&mut self);
 }
@@ -56,11 +56,11 @@ impl<P: Policy> Agent for Player<P> {
         self.values[arm] += (reward - self.values[arm]) / self.counts[arm];
     }
 
-    fn get_values(&self) -> &[f64] {
+    fn borrow_values(&self) -> &[f64] {
         &self.values
     }
 
-    fn get_counts(&self) -> &[f64] {
+    fn borrow_counts(&self) -> &[f64] {
         &self.counts
     }
 

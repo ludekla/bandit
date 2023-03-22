@@ -6,7 +6,7 @@ use std::fmt::Debug;
 
 use crate::agent::{mse, Agent, Player};
 use crate::arm::{BanditArm, BernoulliArm};
-use crate::policy::{AnnealingSoftmax, EpsilonGreedy, Softmax};
+use crate::policy::{AnnealingSoftmax, EpsilonGreedy, Softmax, UCB};
 
 fn report<B: BanditArm + Debug>(name: &str, bandit: &[B], freqs: &[f64], idx: usize) {
     println!("{}", name);
@@ -63,4 +63,9 @@ fn main() {
     let mut am_player = Player::new(am);
     let fq = run(&mut am_player, &bandit, 10000, 5);
     report("AnnealingSoftmax", &bandit, &fq, 2);
+
+    let uc = UCB::new();
+    let mut uc_player = Player::new(uc);
+    let fq = run(&mut uc_player, &bandit, 10000, 5);
+    report("UCB", &bandit, &fq, 2);
 }

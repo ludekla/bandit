@@ -1,8 +1,10 @@
 mod epsgreed;
 mod softmax;
+mod ucb;
 
 pub use epsgreed::EpsilonGreedy;
 pub use softmax::{AnnealingSoftmax, Softmax};
+pub use ucb::UCB;
 
 use crate::agent::Agent;
 
