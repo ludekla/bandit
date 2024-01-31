@@ -42,6 +42,9 @@ where
 }
 
 fn main() {
+
+    println!("Hello Bandit!");
+
     let bandit = vec![
         BernoulliArm::new(0.1),
         BernoulliArm::new(0.1),
