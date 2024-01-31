@@ -7,7 +7,7 @@ bandit algorithms laid out in the book
 
 *John Myles White: Bandit Algorithms for Website Optimization, O'Reilly 2013*
 
-in one of my favourite programming languages: *Rust* instead of Python (as in the book).
+in one of my favourite programming languages: *Rust* (instead of Python, as in the book).
 
 It is always fun to see the performance gain when implementing something in Rust after
 having it done in Python.
